@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EraShop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="bg-grid"></div>
+<div class="bg-vignette"></div>
+
+<div id="app">
+    <!-- Header -->
+    <header id="main-header">
+        <div class="header-left">
+            <div class="shop-logo">🏪</div>
+            <div class="header-info">
+                <h1 id="shop-title">Chargement...</h1>
+                <span id="shop-sector-badge" class="badge">...</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div id="player-sector-info" class="player-badge hidden"></div>
+            <button id="btn-admin" class="btn btn-admin hidden" onclick="openAdmin()">⚙ Admin</button>
+            <button class="btn btn-close-main" onclick="closeUI()">✕ Fermer</button>
+        </div>
+    </header>
+
+    <!-- Category tabs (horizontal) -->
+    <nav id="category-nav">
+        <div id="category-tabs"></div>
+    </nav>
+
+    <!-- Items -->
+    <main id="item-area" class="custom-scrollbar">
+        <div id="item-grid"></div>
+    </main>
+</div>
+
+<!-- Admin slide-in drawer -->
+<div id="admin-overlay" onclick="closeAdmin()"></div>
+<aside id="admin-drawer">
+    <div class="drawer-header">
+        <h2>⚙ Configuration</h2>
+        <button class="btn btn-danger-outline" onclick="deleteShop()">🗑 Supprimer</button>
+    </div>
+    <div id="admin-content" class="drawer-body custom-scrollbar"></div>
+    <div class="drawer-footer">
+        <button class="btn btn-ghost" onclick="closeAdmin()">Annuler</button>
+        <button class="btn btn-primary" onclick="saveAdmin()">💾 Sauvegarder</button>
+    </div>
+</aside>
+
+<!-- Toast notifications -->
+<div id="toast-container"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
