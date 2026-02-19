@@ -50,9 +50,32 @@ function ENT:Use(activator, caller)
     local shopId = self:GetShopID()
     if not shopId or shopId <= 0 then
         if caller:IsSuperAdmin() then
-            caller:ChatPrint("[EraShop] Ce NPC n'a pas de shop assigné.")
+            caller:ChatPrint("[EraShop] NPC non-configuré. Initialisation auto...")
+            
+            local map = game.GetMap()
+            local id, err = EraShop.DB.CreateShop(
+                "Nouveau Shop",
+                self:GetModel(),
+                self:GetPos().x, self:GetPos().y, self:GetPos().z,
+                self:GetAngles().y,
+                map,
+                caller:SteamID64()
+            )
+
+            if id then
+                self:SetShopID(id)
+                self:SetShopName("Nouveau Shop")
+                if not EraShop.NPCEntities then EraShop.NPCEntities = {} end
+                EraShop.NPCEntities[id] = self
+                caller:ChatPrint("[EraShop] NPC assigné (ID: " .. id .. ").")
+                shopId = id
+            else
+                caller:ChatPrint("[EraShop] Erreur : " .. tostring(err))
+                return
+            end
+        else
+            return
         end
-        return
     end
 
     -- Send the shop state to the player

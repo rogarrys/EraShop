@@ -160,8 +160,7 @@ end
 
 -- Spawn all saved NPCs on map load
 hook.Add("InitPostEntity", "EraShop_SpawnSavedNPCs", function()
-    timer.Simple(3, function()
-        EraShop.DB.Init()
+    timer.Simple(2, function()
         local map = game.GetMap()
         local shops = EraShop.DB.GetShopsForMap(map)
 

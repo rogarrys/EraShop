@@ -53,6 +53,9 @@ function EraShop.DB.Init()
     print("[EraShop] Database initialised.")
 end
 
+-- ─── Initialize immediately ───
+EraShop.DB.Init()
+
 -- ═══════════════════════════════════════
 -- SHOP queries
 -- ═══════════════════════════════════════
