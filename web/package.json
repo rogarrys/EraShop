@@ -4,7 +4,6 @@
     "description": "EraShop - Web UI for Garry's Mod Shop NPC addon",
     "private": true,
     "scripts": {
-        "dev": "npx serve . -l 3000",
-        "build": "echo 'Static site, no build needed'"
+        "dev": "npx serve . -l 3000"
     }
 }
