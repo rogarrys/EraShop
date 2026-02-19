@@ -3,62 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EraShop</title>
+    <title>EraShop - Market</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- Background layers -->
-<div class="bg-grid"></div>
-<div class="bg-vignette"></div>
+    <!-- VIDEO BACKGROUND (Optional/Simulated) -->
+    <div class="video-bg"></div>
+    <div class="overlay-bg"></div>
 
-<div id="app">
-    <!-- Header -->
-    <header id="main-header">
-        <div class="header-left">
-            <div class="shop-logo">🏪</div>
-            <div class="header-info">
-                <h1 id="shop-title">Chargement...</h1>
-                <span id="shop-sector-badge" class="badge">...</span>
+    <div class="app-container">
+        
+        <!-- HEADER -->
+        <header class="top-header">
+            <div class="header-left">
+                <h1 class="main-title">ERASHOP - <span id="shop-title">MARKET</span></h1>
+                <p class="subtitle">Welcome to the marketplace citizen!</p>
+            </div>
+            <div class="header-right">
+                <div id="player-sector-info" class="user-sector hidden"> ...</div>
+                <button class="icon-btn hidden" id="btn-admin" onclick="openAdmin()" title="Admin Panel"></button>
+                <button class="icon-btn close-btn" onclick="closeUI()" title="Close"></button>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout">
+            
+            <!-- LEFT: CATEGORIES -->
+            <nav class="categories-nav" id="category-tabs">
+                <!-- JS generated -->
+            </nav>
+
+            <!-- RIGHT: ITEM GRID (HORIZONTAL SCROLL) -->
+            <div class="content-items">
+                <div class="items-scroll-wrapper" id="item-grid-wrapper">
+                    <div class="items-grid" id="item-grid">
+                        <!-- JS generated Items -->
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="header-right">
-            <div id="player-sector-info" class="player-badge hidden"></div>
-            <button id="btn-admin" class="btn btn-admin hidden" onclick="openAdmin()">⚙ Admin</button>
-            <button class="btn btn-close-main" onclick="closeUI()">✕ Fermer</button>
+
+        <!-- FOOTER -->
+        <footer class="bottom-footer">
+            <div class="footer-left">
+                <p class="footer-text">
+                    Welcome to our roleplay server! Here you can purchase various items for your daily needs.</br>
+                    If you encounter any issues or have questions, please feel free to contact our staff.
+                </p>
+                <!-- Badge secteur shop -->
+                <div id="shop-sector-badge" class="sector-badge">...</div>
+            </div>
+            
+            <div class="footer-right">
+                <!-- Selected Item Context -->
+                <div class="selected-item-info" id="selected-item-context">
+                    <span id="selected-item-name">Select an item</span>
+                    <span id="selected-item-price" class="price-tag"></span>
+                </div>
+                <button class="play-btn" id="btn-buy-main" onclick="triggerBuy()" disabled>BUY</button>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- ADMIN DRAWER -->
+    <div class="admin-overlay" id="admin-overlay" onclick="closeAdmin()"></div>
+    <div class="admin-drawer" id="admin-drawer">
+        <div class="admin-header">
+            <h2>Administration Shop</h2>
+            <div class="admin-actions">
+                <button class="btn-save" onclick="saveAdmin()"> Save</button>
+                <button class="btn-danger" onclick="deleteShop()"> Del</button>
+                <button class="btn-close" onclick="closeAdmin()"></button>
+            </div>
         </div>
-    </header>
-
-    <!-- Category tabs (horizontal) -->
-    <nav id="category-nav">
-        <div id="category-tabs"></div>
-    </nav>
-
-    <!-- Items -->
-    <main id="item-area" class="custom-scrollbar">
-        <div id="item-grid"></div>
-    </main>
-</div>
-
-<!-- Admin slide-in drawer -->
-<div id="admin-overlay" onclick="closeAdmin()"></div>
-<aside id="admin-drawer">
-    <div class="drawer-header">
-        <h2>⚙ Configuration</h2>
-        <button class="btn btn-danger-outline" onclick="deleteShop()">🗑 Supprimer</button>
+        <div class="admin-content" id="admin-content">
+            <!-- Formulaire g�n�r� par JS -->
+        </div>
     </div>
-    <div id="admin-content" class="drawer-body custom-scrollbar"></div>
-    <div class="drawer-footer">
-        <button class="btn btn-ghost" onclick="closeAdmin()">Annuler</button>
-        <button class="btn btn-primary" onclick="saveAdmin()">💾 Sauvegarder</button>
-    </div>
-</aside>
 
-<!-- Toast notifications -->
-<div id="toast-container"></div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
