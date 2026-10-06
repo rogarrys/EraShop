@@ -1,0 +1,6 @@
+@echo off
+echo Installation des dependances...
+python -m pip install -r requirements.txt
+echo Lancement de VoxelCraft...
+python main.py --seed 42
+pause
