@@ -1,8 +1,8 @@
 #!/bin/bash
 # ============================================================
-#  VoxelCraft — Telechargement et lancement (CORRIGE)
-#  Telecharge TOUS les fichiers depuis GitHub (y compris game.py
-#  en version reelle, plus besoin de decompression).
+#  VoxelCraft — Telechargement et lancement (VERSION CORRIGEE)
+#  Telecharge le projet depuis GitHub et le place dans la bonne
+#  arborescence (package voxelcraft/ + main.py a la racine).
 # ============================================================
 set -e
 
@@ -17,44 +17,46 @@ echo "========================================"
 mkdir -p "$TARGET_DIR/voxelcraft/ui" "$TARGET_DIR/voxelcraft/tests" "$TARGET_DIR/tests" "$TARGET_DIR/saves"
 cd "$TARGET_DIR"
 
-FILES=(
-    "main.py"
-    "requirements.txt"
-    "README.md"
-    "LANCER.command"
-    "voxelcraft/__init__.py"
-    "voxelcraft/blocks.py"
-    "voxelcraft/noise.py"
-    "voxelcraft/world.py"
-    "voxelcraft/physics.py"
-    "voxelcraft/inventory.py"
-    "voxelcraft/mobs.py"
-    "voxelcraft/save.py"
-    "voxelcraft/renderer.py"
-    "voxelcraft/game.py"
-    "voxelcraft/ui/__init__.py"
-    "voxelcraft/tests/__init__.py"
-    "tests/__init__.py"
-)
-
 echo "[1/3] Telechargement des fichiers depuis GitHub..."
-for f in "${FILES[@]}"; do
-    mkdir -p "$(dirname "$f")"
-    if curl -sL --fail "$BASE_URL/$f" -o "$f"; then
-        echo "  OK   $f"
+
+# Fichiers a la racine du projet local
+ROOT_FILES=("main.py" "requirements.txt" "README.md" "LANCER.command")
+for f in "${ROOT_FILES[@]}"; do
+    if [ ! -f "$f" ]; then
+        curl -sL --fail "$BASE_URL/$f" -o "$f" && echo "  OK   $f" || echo "  ERREUR $f"
     else
-        echo "  ERREUR $f"
+        echo "  present $f"
     fi
 done
+
+# Fichiers du package voxelcraft/
+PKG_FILES=("__init__.py" "blocks.py" "noise.py" "world.py" "physics.py" "inventory.py" "mobs.py" "save.py" "renderer.py" "game.py")
+for f in "${PKG_FILES[@]}"; do
+    if [ ! -f "voxelcraft/$f" ]; then
+        curl -sL --fail "$BASE_URL/$f" -o "voxelcraft/$f" && echo "  OK   voxelcraft/$f" || echo "  ERREUR voxelcraft/$f"
+    else
+        echo "  present voxelcraft/$f"
+    fi
+done
+
+# Sous-dossiers du package
+curl -sL --fail "$BASE_URL/ui/__init__.py" -o "voxelcraft/ui/__init__.py" 2>/dev/null && echo "  OK   voxelcraft/ui/__init__.py" || true
+curl -sL --fail "$BASE_URL/tests/__init__.py" -o "voxelcraft/tests/__init__.py" 2>/dev/null && echo "  OK   voxelcraft/tests/__init__.py" || true
 
 echo ""
 echo "Verification des fichiers essentiels..."
-for f in "voxelcraft/game.py" "voxelcraft/blocks.py" "main.py"; do
+MISSING=0
+for f in "voxelcraft/game.py" "voxelcraft/blocks.py" "voxelcraft/noise.py" "voxelcraft/world.py" "voxelcraft/physics.py" "voxelcraft/inventory.py" "voxelcraft/mobs.py" "voxelcraft/save.py" "voxelcraft/renderer.py" "voxelcraft/__init__.py" "main.py" "requirements.txt"; do
     if [ ! -f "$f" ]; then
-        echo "ERREUR: $f est manquant ! Le jeu ne peut pas se lancer."
-        exit 1
+        echo "  MANQUANT: $f"
+        MISSING=1
     fi
 done
+if [ "$MISSING" = "1" ]; then
+    echo ""
+    echo "ERREUR: Des fichiers sont manquants. Telechargement incomplet."
+    exit 1
+fi
 echo "  Tous les fichiers essentiels sont presents."
 
 echo ""
