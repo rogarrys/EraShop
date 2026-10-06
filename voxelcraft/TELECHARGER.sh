@@ -1,16 +1,8 @@
 #!/bin/bash
 # ============================================================
-#  VoxelCraft — Téléchargement et lancement en UNE commande
-# ============================================================
-#  Usage :
-#    curl -sL https://raw.githubusercontent.com/rogarrys/EraShop/main/voxelcraft/TELECHARGER.sh | bash
-#    ou : ./TELECHARGER.sh [seed]
-#
-#  Ce script :
-#    1. Télécharge le projet depuis GitHub
-#    2. Décompresse game.py et les tests
-#    3. Installe les dépendances Python
-#    4. Lance le jeu
+#  VoxelCraft — Telechargement et lancement (CORRIGE)
+#  Telecharge TOUS les fichiers depuis GitHub (y compris game.py
+#  en version reelle, plus besoin de decompression).
 # ============================================================
 set -e
 
@@ -19,7 +11,7 @@ BASE_URL="https://raw.githubusercontent.com/rogarrys/EraShop/main/voxelcraft"
 TARGET_DIR="voxelcraft-game"
 
 echo "========================================"
-echo "  VoxelCraft — Téléchargement & Lancement"
+echo "  VoxelCraft — Telechargement & Lancement"
 echo "========================================"
 
 mkdir -p "$TARGET_DIR/voxelcraft/ui" "$TARGET_DIR/voxelcraft/tests" "$TARGET_DIR/tests" "$TARGET_DIR/saves"
@@ -29,10 +21,7 @@ FILES=(
     "main.py"
     "requirements.txt"
     "README.md"
-    ".gitignore"
-    "LANCER.bat"
     "LANCER.command"
-    "RECUPERATION.md"
     "voxelcraft/__init__.py"
     "voxelcraft/blocks.py"
     "voxelcraft/noise.py"
@@ -42,36 +31,40 @@ FILES=(
     "voxelcraft/mobs.py"
     "voxelcraft/save.py"
     "voxelcraft/renderer.py"
-    "voxelcraft/game.b64.txt"
+    "voxelcraft/game.py"
     "voxelcraft/ui/__init__.py"
-    "voxelcraft/tests/test_voxelcraft.b64.txt"
+    "voxelcraft/tests/__init__.py"
+    "tests/__init__.py"
 )
 
-echo "[1/4] Téléchargement des fichiers depuis GitHub..."
+echo "[1/3] Telechargement des fichiers depuis GitHub..."
 for f in "${FILES[@]}"; do
     mkdir -p "$(dirname "$f")"
-    curl -sL --fail "$BASE_URL/$f" -o "$f" && echo "  ✓ $f" || echo "  ✗ $f (ERREUR)"
+    if curl -sL --fail "$BASE_URL/$f" -o "$f"; then
+        echo "  OK   $f"
+    else
+        echo "  ERREUR $f"
+    fi
 done
 
-echo "[2/4] Décompression de game.py et des tests..."
-python3 -c "
-import base64, zlib
-with open('voxelcraft/game.b64.txt') as f:
-    src = zlib.decompress(base64.b64decode(f.read()))
-open('voxelcraft/game.py', 'wb').write(src)
-print(f'  ✓ game.py décompressé ({len(src)} octets)')
-with open('voxelcraft/tests/test_voxelcraft.b64.txt') as f:
-    src = zlib.decompress(base64.b64decode(f.read()))
-open('tests/test_voxelcraft.py', 'wb').write(src)
-print(f'  ✓ tests décompressés ({len(src)} octets)')
-"
+echo ""
+echo "Verification des fichiers essentiels..."
+for f in "voxelcraft/game.py" "voxelcraft/blocks.py" "main.py"; do
+    if [ ! -f "$f" ]; then
+        echo "ERREUR: $f est manquant ! Le jeu ne peut pas se lancer."
+        exit 1
+    fi
+done
+echo "  Tous les fichiers essentiels sont presents."
 
-echo "[3/4] Installation des dépendances (cela peut prendre 1-2 min)..."
+echo ""
+echo "[2/3] Installation des dependances (1-2 min)..."
 python3 -m pip install -r requirements.txt --quiet 2>&1 | tail -1 || true
 
-echo "[4/4] Lancement de VoxelCraft (seed=$SEED)..."
 echo ""
-echo "  Contrôles : ZQSD/WASD = bouger | Espace = sauter | Clic G = casser"
-echo "              Clic D = poser | E = inventaire | F = vol | Échap = menu"
+echo "[3/3] Lancement de VoxelCraft (seed=$SEED)..."
+echo ""
+echo "  Controles : ZQSD/WASD = bouger | Espace = sauter | Clic G = casser"
+echo "              Clic D = poser | E = inventaire | F = vol | Echap = menu"
 echo ""
 python3 main.py --seed "$SEED"
