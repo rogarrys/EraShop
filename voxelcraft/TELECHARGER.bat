@@ -1,9 +1,8 @@
 @echo off
 REM ============================================================
-REM  VoxelCraft — Telechargement et lancement en UN double-clic
-REM ============================================================
-REM  Ce script telecharge tous les fichiers depuis GitHub,
-REM  decompresse game.py, installe les dependances et lance le jeu.
+REM  VoxelCraft — Telechargement et lancement (CORRIGE)
+REM  Telecharge TOUS les fichiers depuis GitHub (y compris game.py
+REM  en version reelle, plus besoin de decompression).
 REM ============================================================
 setlocal EnableDelayedExpansion
 
@@ -21,27 +20,53 @@ if not exist "%TARGET_DIR%" mkdir "%TARGET_DIR%"
 cd "%TARGET_DIR%"
 if not exist "voxelcraft" mkdir "voxelcraft\ui" "voxelcraft\tests" "tests" "saves"
 
-echo [1/4] Telechargement des fichiers depuis GitHub...
+echo [1/3] Telechargement des fichiers depuis GitHub...
 
-set FILES=main.py requirements.txt README.md .gitignore LANCER.bat LANCER.command RECUPERATION.md voxelcraft/__init__.py voxelcraft/blocks.py voxelcraft/noise.py voxelcraft/world.py voxelcraft/physics.py voxelcraft/inventory.py voxelcraft/mobs.py voxelcraft/save.py voxelcraft/renderer.py voxelcraft/game.b64.txt voxelcraft/ui/__init__.py voxelcraft/tests/test_voxelcraft.b64.txt
+set FILES=main.py requirements.txt README.md LANCER.bat LANCER.command voxelcraft/__init__.py voxelcraft/blocks.py voxelcraft/noise.py voxelcraft/world.py voxelcraft/physics.py voxelcraft/inventory.py voxelcraft/mobs.py voxelcraft/save.py voxelcraft/renderer.py voxelcraft/game.py voxelcraft/ui/__init__.py voxelcraft/tests/__init__.py tests/__init__.py
 
 for %%f in (%FILES%) do (
     if not exist "%%f" (
         mkdir "%%~dpf" 2>nul
-        curl -sL --fail "%BASE_URL%/%%f" -o "%%f" && echo   OK  %%f || echo   ERREUR %%f
+        curl -sL --fail "%BASE_URL%/%%f" -o "%%f"
+        if exist "%%f" (
+            echo   OK   %%f
+        ) else (
+            echo   ERREUR %%f - telechargement echoue
+        )
     ) else (
         echo   present %%f
     )
 )
 
-echo [2/4] Decompression de game.py et des tests...
-python -c "import base64,zlib; f=open('voxelcraft/game.b64.txt'); src=zlib.decompress(base64.b64decode(f.read())); open('voxelcraft/game.py','wb').write(src); print('  OK game.py ('+str(len(src))+' octets)')"
-python -c "import base64,zlib; f=open('voxelcraft/tests/test_voxelcraft.b64.txt'); src=zlib.decompress(base64.b64decode(f.read())); open('tests/test_voxelcraft.py','wb').write(src); print('  OK tests ('+str(len(src))+' octets)')"
+echo.
+echo Verification des fichiers essentiels...
+if not exist "voxelcraft\game.py" (
+    echo ERREUR: voxelcraft\game.py est manquant ! Le jeu ne peut pas se lancer.
+    pause
+    exit /b 1
+)
+if not exist "voxelcraft\blocks.py" (
+    echo ERREUR: voxelcraft\blocks.py est manquant !
+    pause
+    exit /b 1
+)
+if not exist "main.py" (
+    echo ERREUR: main.py est manquant !
+    pause
+    exit /b 1
+)
+echo   Tous les fichiers essentiels sont presents.
 
-echo [3/4] Installation des dependances...
+echo.
+echo [2/3] Installation des dependances (1-2 min)...
 python -m pip install -r requirements.txt --quiet
+if errorlevel 1 (
+    echo Tentative avec --user...
+    python -m pip install -r requirements.txt --quiet --user
+)
 
-echo [4/4] Lancement de VoxelCraft (seed=%SEED%)...
+echo.
+echo [3/3] Lancement de VoxelCraft (seed=%SEED%)...
 echo.
 echo   Controles : ZQSD/WASD = bouger ^| Espace = sauter ^| Clic G = casser
 echo              Clic D = poser ^| E = inventaire ^| F = vol ^| Echap = menu
